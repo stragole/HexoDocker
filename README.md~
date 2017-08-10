@@ -70,6 +70,7 @@
 
 ### 2. 本地预览/部署
 - 方法1： 进入`hexo-shell`中执行对应命令
-- 方法2： 运行对应容器
+- 方法2：
 	- Server: `docker start hexo-server`
-	- Deploy: `docker start -a hexo-deploy`(`-a`: 实时输出部署日志)
+	- Deploy: `docker start hexo-deploy`
+	- 查看执行日志: `docker logs hexo-deploy`
