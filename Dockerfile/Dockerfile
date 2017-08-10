@@ -6,7 +6,11 @@ RUN \
     echo "http://mirrors.ustc.edu.cn/alpine/v3.4/main" > /etc/apk/repositories && \
     echo "http://mirrors.ustc.edu.cn/alpine/v3.4/community" >> /etc/apk/repositories && \
     apk --update --no-progress add git openssh && \
-    apk add rsync
+    apk add rsync && \
+    apk add ca-certificates && \
+    apk add tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
 
 WORKDIR /Hexo
 
