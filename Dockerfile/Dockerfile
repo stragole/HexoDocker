@@ -25,7 +25,7 @@ RUN \
     && npm install hexo-renderer-markdown-it --save \
     && npm install hexo-deployer-rsync --save
 
-VOLUME ["/Hexo/source", "/Hexo/themes", "/root/.ssh"]
+VOLUME ["/Hexo/source", "/root/.ssh"]
 
 EXPOSE 80
 
