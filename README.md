@@ -1,8 +1,14 @@
 # HexoDocker
 
 基于[yakumioto/docker-hexo](https://github.com/yakumioto/docker-hexo/tree/master/3.2/alpine)做的修改，部署改为使用`rsync`。
-## 获取镜像
-`docker pull stragod/hexo:3.3.8` (Hexo v3.3.8)
+
+- 修改`apk`源到国内镜像
+- 安装`rsync`和`hexo-deployer-rsync`
+- 设置淘宝`npm`镜像源
+- 删除不必要的匿名卷
+ 
+## 获取镜像 (Hexo v3.3.8)
+`docker pull stragod/hexo:3.3.8` 
 
 ## 创建容器
 
@@ -11,30 +17,27 @@
 	# 本地端口`4000`映射容器端口`80`
 	$ docker run -p 4000:80 --name hexo-server -d \
 	
-	# 将.ssh挂载到容器中
-	-v ~/.ssh:/root/.ssh \
-	
-	# 挂载Hexo需要用到的三个路径
+	# 挂载启动`Server`需要用到的三个文件夹
 	-v {博客文件夹路径}/source:/Hexo/source \
 	-v {博客文件夹路径}/themes:/Hexo/themes \
 	-v {博客文件夹路径}/_config.yml:/Hexo/_config.yml \
 	
-	# 使用的镜像; s -> `hexo server`
+	# s: `hexo server`
 	stragod/hexo:3.3.8 s
 	
 ### 2. 创建Deploy容器
 	
 	$ docker run --name hexo-deploy -d \
 
-	# 将.ssh挂载到容器中
+	# 部署需要用到`ssh`，将`.ssh`文件夹挂载到容器中
 	-v ~/.ssh:/root/.ssh \
 	
-	# 挂载Hexo需要用到的三个路径
+	# 挂载部署需要用到的三个文件夹
 	-v {博客文件夹路径}/source:/Hexo/source \
 	-v {博客文件夹路径}/themes:/Hexo/themes \
 	-v {博客文件夹路径}/_config.yml:/Hexo/_config.yml \
 	
-	# 使用的镜像; d -> `hexo cl && hexo d -g`
+	# d: `hexo cl && hexo d -g`
 	stragod/hexo:3.3.8 d
 
 ### 3. 创建Shell执行容器
@@ -45,10 +48,13 @@
 	# 将.ssh挂载到容器中
 	-v ~/.ssh:/root/.ssh \
 	
-	# 挂载Hexo需要用到的三个路径
+	# 挂载Hexo需要用到的三个文件夹
 	-v {博客文件夹路径}/source:/Hexo/source \
 	-v {博客文件夹路径}/themes:/Hexo/themes \
 	-v {博客文件夹路径}/_config.yml:/Hexo/_config.yml \
+	
+	# 有自定义`hexo new`模板的把对应文件夹挂载上
+	-v {博客文件夹路径}/scaffolds:/Hexo/scaffolds \
 	
 	# /bin/sh作为参数，进入终端
 	stragod/hexo:3.3.8 /bin/sh
