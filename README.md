@@ -1,6 +1,6 @@
 # HexoDocker
 
-基于[yakumioto/docker-hexo](https://github.com/yakumioto/docker-hexo/tree/master/3.2/alpine)做的修改，部署改为使用`rsync`。
+基于[yakumioto/docker-hexo](https://github.com/yakumioto/docker-hexo/tree/master/3.2/alpine)做的修改
 ## 获取镜像
 `docker pull stragod/hexo:3.3.8` (Hexo v3.3.8)
 
