@@ -1,8 +1,14 @@
 # HexoDocker
 
-基于[yakumioto/docker-hexo](https://github.com/yakumioto/docker-hexo/tree/master/3.2/alpine)做的修改
-## 获取镜像
-`docker pull stragod/hexo:3.3.8` (Hexo v3.3.8)
+基于[yakumioto/docker-hexo](https://github.com/yakumioto/docker-hexo/tree/master/3.2/alpine)做的修改，具体修改细节过程见[《配置Hexo到Docker并部署至VPS》](http://blog.strago.xin/2017/Hexo-Docker-VPS/)。
+
+- 修改`apk`源到国内镜像
+- 安装`rsync`和`hexo-deployer-rsync`
+- 设置淘宝`npm`镜像源
+- 删除不必要的匿名卷
+ 
+## 获取镜像 (Hexo v3.3.8)
+`docker pull stragod/hexo:3.3.8` 
 
 ## 创建容器
 
@@ -11,30 +17,27 @@
 	# 本地端口`4000`映射容器端口`80`
 	$ docker run -p 4000:80 --name hexo-server -d \
 	
-	# 将.ssh挂载到容器中
-	-v ~/.ssh:/root/.ssh \
-	
-	# 挂载Hexo需要用到的三个路径
+	# 挂载启动`Server`需要用到的三个文件夹
 	-v {博客文件夹路径}/source:/Hexo/source \
 	-v {博客文件夹路径}/themes:/Hexo/themes \
 	-v {博客文件夹路径}/_config.yml:/Hexo/_config.yml \
 	
-	# 使用的镜像; s -> `hexo server`
+	# s: `hexo server`
 	stragod/hexo:3.3.8 s
 	
 ### 2. 创建Deploy容器
 	
 	$ docker run --name hexo-deploy -d \
 
-	# 将.ssh挂载到容器中
+	# 部署需要用到`ssh`，将`.ssh`文件夹挂载到容器中
 	-v ~/.ssh:/root/.ssh \
 	
-	# 挂载Hexo需要用到的三个路径
+	# 挂载部署需要用到的三个文件夹
 	-v {博客文件夹路径}/source:/Hexo/source \
 	-v {博客文件夹路径}/themes:/Hexo/themes \
 	-v {博客文件夹路径}/_config.yml:/Hexo/_config.yml \
 	
-	# 使用的镜像; d -> `hexo cl && hexo d -g`
+	# d: `hexo cl && hexo d -g`
 	stragod/hexo:3.3.8 d
 
 ### 3. 创建Shell执行容器
@@ -45,10 +48,13 @@
 	# 将.ssh挂载到容器中
 	-v ~/.ssh:/root/.ssh \
 	
-	# 挂载Hexo需要用到的三个路径
+	# 挂载Hexo需要用到的三个文件夹
 	-v {博客文件夹路径}/source:/Hexo/source \
 	-v {博客文件夹路径}/themes:/Hexo/themes \
 	-v {博客文件夹路径}/_config.yml:/Hexo/_config.yml \
+	
+	# 有自定义`hexo new`模板的把对应文件夹挂载上
+	-v {博客文件夹路径}/scaffolds:/Hexo/scaffolds \
 	
 	# /bin/sh作为参数，进入终端
 	stragod/hexo:3.3.8 /bin/sh
@@ -70,7 +76,11 @@
 
 ### 2. 本地预览/部署
 - 方法1： 进入`hexo-shell`中执行对应命令
-- 方法2：
+- 方法2： 运行对应容器
 	- Server: `docker start hexo-server`
-	- Deploy: `docker start hexo-deploy`
-	- 查看执行日志: `docker logs hexo-deploy`
+
+		由于环境配置在Linux下，无法自动检测`_post`文件夹变化自动进行页面更新，所以每次修改文章后都需要手动调用命令进行预览。
+	
+	- Deploy: `docker start -a hexo-deploy`
+
+		`-a`: 实时输出日志
